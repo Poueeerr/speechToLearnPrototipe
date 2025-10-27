@@ -36,14 +36,18 @@ export default function VideoPlayer({ apiModel, selectedLanguage }) {
   const description = apiModel.metadata.localizations[selectedLanguage]?.description;
 
   return (
-    <>
-      <video ref={videoRef} controls preload="metadata" style={{width: "50%"}}></video>
-      <div className="bottom">
-        <b>
-          <h3>{title}</h3>
-        </b>
-        <p>{description}</p>
+    <div className="w-full">
+      <video
+        ref={videoRef}
+        controls
+        preload="metadata"
+        className="w-full rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        aria-label={`Vídeo: ${title || "Sem título"}`}
+      ></video>
+      <div className="mt-4">
+        <h3 className="text-xl font-semibold text-inherit">{title}</h3>
+        <p className="text-inherit mt-1">{description}</p>
       </div>
-    </>
+    </div>
   );
 }

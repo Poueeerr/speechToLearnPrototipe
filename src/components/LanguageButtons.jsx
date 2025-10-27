@@ -10,19 +10,27 @@ const flagImages = {
 
 export default function LanguageButtons({ localizations, setSelectedLanguage, carregarResumo }) {
   return (
-    <div>
+    <div
+      className="flex flex-wrap justify-center gap-4"
+      role="group"
+      aria-label="Seleção de idioma"
+    >
       {Object.keys(localizations).map((lang) => (
-        <div key={lang}>
-          <button
-            onClick={() => {
-              setSelectedLanguage(lang);
-              carregarResumo(lang);
-            }}
-          >
-            <img src={flagImages[lang.toLowerCase()]} alt={`Bandeira do ${lang}`} style={{width: "30px", height: "30px"}} />
-            <p>{lang.toUpperCase()}</p>
-          </button>
-        </div>
+        <button
+          key={lang}
+          onClick={() => {
+            setSelectedLanguage(lang);
+            carregarResumo(lang);
+          }}
+          className="flex flex-col items-center justify-center border border-gray-300 dark:border-gray-600 rounded-lg p-3 shadow hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-150"
+        >
+          <img
+            src={flagImages[lang.toLowerCase()]}
+            alt={`Bandeira representando ${lang.toUpperCase()}`}
+            className="w-8 h-8 mb-1"
+          />
+          <span className="text-sm font-medium">{lang.toUpperCase()}</span>
+        </button>
       ))}
     </div>
   );
