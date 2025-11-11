@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import VideoPlayer from "../components/VideoPlayer";
 import LanguageButtons from "../components/LanguageButtons";
 import Transcription from "../components/Transcription";
+import DragDropVideoPlayer from "../components/DropVideo";
 
 const url_base = "https://falvojr.github.io/speech2learning";
 
@@ -60,10 +61,11 @@ export default function App() {
 
       <section className="flex flex-col md:flex-row flex-1">
         <article className="w-full md:w-2/3 p-6">
-          <VideoPlayer
+          {/* <VideoPlayer
             apiModel={apiModel}
             selectedLanguage={selectedLanguage}
-          />
+          /> */}
+          <DragDropVideoPlayer></DragDropVideoPlayer>
         </article>
 
         <aside className="w-full md:flex-1 flex flex-col gap-6 p-6 overscroll-none">
