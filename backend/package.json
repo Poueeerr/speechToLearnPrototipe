@@ -1,0 +1,29 @@
+{
+  "name": "projeto1-blog",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@prisma/client": "^6.12.0",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mailtrap": "^4.2.0",
+    "multer": "^2.0.2",
+    "nodemailer": "^6.10.1",
+    "openai": "^6.9.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

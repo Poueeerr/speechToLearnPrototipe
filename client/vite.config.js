@@ -5,6 +5,11 @@ import react from '@vitejs/plugin-react-swc'
 export default defineConfig({
   plugins: [react()],
   server: {
-    cors: true
-  }
+    cors: true,
+    proxy: {
+      '/transcription': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      }
+  }}
 })

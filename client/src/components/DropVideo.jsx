@@ -24,7 +24,7 @@ export default function DragDropVideoPlayer() {
 
         const newVideoSrc = URL.createObjectURL(file);
         setVideoSrc(newVideoSrc);
-        setVideoTitle(file.name); 
+        setVideoTitle(file.name);
       } else {
         console.warn("Arquivo solto não é um vídeo.");
         setVideoTitle("Arquivo inválido. Por favor, solte um vídeo.");
@@ -51,7 +51,7 @@ export default function DragDropVideoPlayer() {
   useEffect(() => {
     if (videoSrc && videoRef.current) {
       videoRef.current.src = videoSrc;
-      videoRef.current.load(); // Carrega o novo vídeo
+      videoRef.current.load();
     }
   }, [videoSrc]);
 
@@ -61,7 +61,24 @@ export default function DragDropVideoPlayer() {
         URL.revokeObjectURL(videoSrc);
       }
     };
-  }, [videoSrc]); 
+  }, [videoSrc]);
+
+  const sendToTranscription = async () => {
+    if (!videoSrc) return;
+
+    const blob = await fetch(videoSrc).then((r) => r.blob());
+    const formData = new FormData();
+
+    formData.append("video", blob, videoTitle);
+
+    const response = await fetch("http://localhost:3000/transcription", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+    console.log("Transcrição:", data);
+  };
 
   return (
     <div className="w-full ">
@@ -126,7 +143,7 @@ export default function DragDropVideoPlayer() {
       {videoSrc && (
         <div
           className="relative"
-          onDragOver={handleDragOver} 
+          onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
@@ -136,13 +153,18 @@ export default function DragDropVideoPlayer() {
             preload="metadata"
             className="w-full rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             aria-label={`Vídeo: ${videoTitle || "Vídeo carregado"}`}
+          ></video>
+          <button
+            onClick={sendToTranscription}
+            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
           >
-          </video>
+            Transcrever Vídeo
+          </button>
 
           {isDragging && (
             <div
               className="absolute inset-0 bg-blue-900 bg-opacity-50 flex justify-center items-center rounded-xl z-10"
-              style={{ pointerEvents: "none" }} 
+              style={{ pointerEvents: "none" }}
             >
               <span className="text-white text-2xl font-semibold">
                 Solte para carregar!
