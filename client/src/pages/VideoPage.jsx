@@ -1,38 +1,38 @@
-import { useEffect, useState } from "react";
-import VideoPlayer from "../components/VideoPlayer";
-import LanguageButtons from "../components/LanguageButtons";
+import { useEffect, useState, useRef } from "react";
 import Transcription from "../components/Transcription";
 import DragDropVideoPlayer from "../components/DropVideo";
 
 const url_base = "https://falvojr.github.io/speech2learning";
 
 export default function App() {
-  const [apiModel, setApiModel] = useState({
-    id: "",
-    url: "",
-    metadata: { originalLanguage: "", localizations: {} },
-  });
-  const [selectedLanguage, setSelectedLanguage] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState("pt-BR");
   const [transcription, setTranscription] = useState("");
   const [highContrast, setHighContrast] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const videoRef = useRef(null);
 
   useEffect(() => {
-    fetch(url_base + "/api/mockV2.json")
-      .then((res) => res.json())
-      .then((data) => {
-        setApiModel(data);
-        setSelectedLanguage(data.metadata.originalLanguage);
-      })
-      .catch((err) => console.error(err));
+    setSelectedLanguage("pt-BR");
   }, []);
 
-  const carregarResumo = (lang) => {
-    const url = apiModel.metadata.localizations[lang]?.transcriptUrl;
-    if (!url) return;
-    fetch(url)
-      .then((res) => res.text())
-      .then((text) => setTranscription(text))
-      .catch((err) => console.error(err));
+  const handleTranscriptionReceived = (data) => {
+    // data contem { text, segments }
+    setTranscription(data);
+  };
+
+  const handleVideoTimeUpdate = (time) => {
+    setCurrentTime(time);
+  };
+
+  const handleSegmentClick = (startTime) => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = startTime;
+      videoRef.current.play();
+    }
+  };
+
+  const handleVideoRef = (ref) => {
+    videoRef.current = ref;
   };
 
   return (
@@ -65,19 +65,19 @@ export default function App() {
             apiModel={apiModel}
             selectedLanguage={selectedLanguage}
           /> */}
-          <DragDropVideoPlayer></DragDropVideoPlayer>
+          <DragDropVideoPlayer
+            onTranscriptionReceived={handleTranscriptionReceived}
+            onVideoTimeUpdate={handleVideoTimeUpdate}
+            onVideoRef={handleVideoRef}
+          />
         </article>
 
         <aside className="w-full md:flex-1 flex flex-col gap-6 p-6 overscroll-none">
-          <LanguageButtons
-            localizations={apiModel.metadata.localizations}
-            setSelectedLanguage={setSelectedLanguage}
-            carregarResumo={carregarResumo}
-          />
           <Transcription
             transcription={transcription}
-            setTranscription={setTranscription}
             highContrast={highContrast}
+            currentTime={currentTime}
+            onSegmentClick={handleSegmentClick}
           />
         </aside>
       </section>
