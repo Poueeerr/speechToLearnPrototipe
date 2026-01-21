@@ -43,7 +43,7 @@ export default function App() {
     >
       <header className="flex items-center justify-between p-4">
         <div>
-          <p className="text-xl font-bold text-inherit">Speech To Learn</p>
+          <h1 className="text-xl font-bold text-inherit">Speech To Learn</h1>
         </div>
         <div>
           <button
@@ -69,6 +69,7 @@ export default function App() {
             onTranscriptionReceived={handleTranscriptionReceived}
             onVideoTimeUpdate={handleVideoTimeUpdate}
             onVideoRef={handleVideoRef}
+            highContrast={highContrast}
           />
         </article>
 

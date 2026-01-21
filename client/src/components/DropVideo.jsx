@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 
-export default function DragDropVideoPlayer({ onTranscriptionReceived, onVideoTimeUpdate, onVideoRef }) {
+export default function DragDropVideoPlayer({ onTranscriptionReceived, onVideoTimeUpdate, onVideoRef, highContrast }) {
   const videoRef = useRef(null);
   const dropZoneRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const [videoSrc, setVideoSrc] = useState(null);
   const [videoTitle, setVideoTitle] = useState("");
@@ -47,6 +48,30 @@ export default function DragDropVideoPlayer({ onTranscriptionReceived, onVideoTi
     if (e.target === dropZoneRef.current) {
       setIsDragging(false);
     }
+  };
+
+  const handleFileSelect = (e) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+
+      if (file.type.startsWith("video/")) {
+        if (videoSrc) {
+          URL.revokeObjectURL(videoSrc);
+        }
+
+        const newVideoSrc = URL.createObjectURL(file);
+        setVideoSrc(newVideoSrc);
+        setVideoTitle(file.name);
+      } else {
+        console.warn("Arquivo não é um vídeo.");
+        setVideoTitle("Arquivo inválido. Por favor, selecione um vídeo.");
+      }
+    }
+  };
+
+  const openFileDialog = () => {
+    fileInputRef.current?.click();
   };
 
   useEffect(() => {
@@ -99,17 +124,26 @@ export default function DragDropVideoPlayer({ onTranscriptionReceived, onVideoTi
 
   return (
     <div className="w-full ">
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="video/*"
+        onChange={handleFileSelect}
+        className="hidden"
+        aria-label="Selecionar arquivo de vídeo"
+      />
       {(!videoSrc || isDragging) && (
         <div
           ref={dropZoneRef}
+          onClick={openFileDialog}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           className={`
             relative w-full h-64 border-2 border-dashed rounded-xl 
             flex flex-col justify-center items-center 
-            text-gray-500 transition-colors duration-200
-            ${isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300"}
+            text-gray-500 transition-colors duration-200 cursor-pointer
+            ${isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-gray-400"}
           `}
         >
           {isDragging && (
@@ -179,7 +213,11 @@ export default function DragDropVideoPlayer({ onTranscriptionReceived, onVideoTi
           <button
             onClick={sendToTranscription}
             disabled={isLoading}
-            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded cursor-pointer disabled:bg-blue-400 disabled:cursor-not-allowed transition-all"
+            className={`mt-4 px-4 py-2 rounded cursor-pointer transition-all font-semibold focus:outline-none focus:ring-2 ${
+              highContrast
+                ? "bg-yellow-400 text-black hover:bg-yellow-300 disabled:bg-yellow-200 focus:ring-yellow-500"
+                : "bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-400 focus:ring-blue-400"
+            } disabled:cursor-not-allowed`}
           >
             {isLoading ? "Transcrevendo..." : "Transcrever Vídeo"}
           </button>
